@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Button, Form, Table, Modal, Card, Alert } from 'react-bootstrap';
 import api from '../api';
+import { downloadCsv, toCsv } from '../utils/csv';
 
 const Clients = () => {
   const [clients, setClients] = useState([]);
@@ -98,11 +99,27 @@ const Clients = () => {
     }
   };
 
+  const handleExportCsv = () => {
+    setError('');
+    const csvText = toCsv(clients, [
+      { key: 'name', label: 'Name' },
+      { key: 'address', label: 'Address' },
+      { key: 'tel', label: 'Tel' },
+      { key: 'email', label: 'Email' }
+    ]);
+
+    const stamp = new Date().toISOString().slice(0, 10);
+    downloadCsv(`clients_${stamp}.csv`, csvText);
+  };
+
   return (
     <Container fluid className="mt-4">
       <h1>Clients</h1>
       {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
       <Button onClick={openCreate}>Add Client</Button>
+      <Button variant="outline-secondary" className="ms-2" onClick={handleExportCsv}>
+        Export CSV
+      </Button>
       <Table striped bordered hover responsive className="mt-3">
         <thead>
           <tr>

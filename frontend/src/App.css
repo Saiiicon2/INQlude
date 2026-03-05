@@ -5,6 +5,13 @@
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.92)),
+    url('./assets/network-mesh-wire-digital-technology-background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 .app-layout {
@@ -27,6 +34,10 @@ body {
     margin-left: 0;
     width: 100%;
     padding: 12px;
+  }
+
+  body {
+    background-attachment: scroll;
   }
 }
 

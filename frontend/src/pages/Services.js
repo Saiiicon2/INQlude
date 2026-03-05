@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Button, Form, Table, Modal, Alert } from 'react-bootstrap';
 import api from '../api';
+import { downloadCsv, toCsv } from '../utils/csv';
 
 const Services = () => {
   const [services, setServices] = useState([]);
@@ -103,12 +104,27 @@ const Services = () => {
     }
   };
 
+  const handleExportCsv = () => {
+    setError('');
+    const csvText = toCsv(services, [
+      { key: 'code', label: 'Code' },
+      { key: 'description', label: 'Description' },
+      { key: 'price', label: 'Rate' }
+    ]);
+
+    const stamp = new Date().toISOString().slice(0, 10);
+    downloadCsv(`services_${stamp}.csv`, csvText);
+  };
+
   return (
     <Container fluid className="mt-4">
       <h1>Services</h1>
       {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
 
       <Button onClick={openCreate}>Add Service</Button>
+      <Button variant="outline-secondary" className="ms-2" onClick={handleExportCsv}>
+        Export CSV
+      </Button>
 
       <Table striped bordered hover responsive className="mt-3">
         <thead>

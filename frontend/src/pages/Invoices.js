@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Button, Form, Table, Modal, Row, Col, Alert } from 'react-bootstrap';
 import api from '../api';
 import SignatureCapture from '../components/SignatureCapture';
+import { downloadCsv, toCsv } from '../utils/csv';
 
 const Invoices = () => {
   const [documents, setDocuments] = useState({ invoices: [], quotes: [] });
@@ -142,6 +143,31 @@ const Invoices = () => {
     ...documents.quotes.map(d => ({ ...d, docType: 'quote' }))
   ].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
+  const handleExportCsv = () => {
+    setError('');
+
+    const rows = allDocs.map((d) => ({
+      number: d.number,
+      type: d.docType,
+      client: d.client?.name,
+      total: typeof d.total === 'number' ? d.total.toFixed(2) : d.total,
+      status: d.status,
+      createdAt: d.createdAt ? new Date(d.createdAt).toISOString() : ''
+    }));
+
+    const csvText = toCsv(rows, [
+      { key: 'number', label: 'Number' },
+      { key: 'type', label: 'Type' },
+      { key: 'client', label: 'Client' },
+      { key: 'total', label: 'Total' },
+      { key: 'status', label: 'Status' },
+      { key: 'createdAt', label: 'Created At (ISO)' }
+    ]);
+
+    const stamp = new Date().toISOString().slice(0, 10);
+    downloadCsv(`invoices_quotes_${stamp}.csv`, csvText);
+  };
+
   return (
     <Container fluid className="mt-4">
       <Row className="mb-4">
@@ -151,6 +177,9 @@ const Invoices = () => {
         <Col className="text-end">
           <Button onClick={() => setShow(true)} style={{ backgroundColor: '#20b2aa', borderColor: '#20b2aa' }}>
             New Sale
+          </Button>
+          <Button variant="outline-secondary" className="ms-2" onClick={handleExportCsv}>
+            Export CSV
           </Button>
         </Col>
       </Row>
