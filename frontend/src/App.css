@@ -1,0 +1,41 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.flex-grow-1 {
+  flex: 1;
+  margin-left: 250px;
+  width: calc(100% - 250px);
+  padding: 20px;
+}
+
+/* Card styling */
+.card {
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.card-title {
+  color: #008080;
+}
+
+/* Button styling */
+.btn-primary {
+  background-color: #20b2aa;
+  border-color: #20b2aa;
+}
+
+.btn-primary:hover {
+  background-color: #008080;
+  border-color: #008080;
+}
