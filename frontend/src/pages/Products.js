@@ -117,7 +117,7 @@ const Products = () => {
 
       <Button onClick={openCreate}>Add Product</Button>
       <Button variant="secondary" className="ms-2" onClick={handleImport}>Import Excel</Button>
-      <Table striped bordered hover className="mt-3">
+      <Table striped bordered hover responsive className="mt-3">
         <thead>
           <tr>
             <th>Code</th>

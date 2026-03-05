@@ -103,7 +103,7 @@ const Clients = () => {
       <h1>Clients</h1>
       {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
       <Button onClick={openCreate}>Add Client</Button>
-      <Table striped bordered hover className="mt-3">
+      <Table striped bordered hover responsive className="mt-3">
         <thead>
           <tr>
             <th>Name</th>

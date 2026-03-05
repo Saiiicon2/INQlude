@@ -9,6 +9,37 @@
   position: fixed;
 }
 
+.sidebar.sidebar-static {
+  position: static;
+  height: auto;
+  width: 100%;
+}
+
+.mobile-topbar {
+  background: linear-gradient(135deg, #008080, #20b2aa);
+  color: white;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+}
+
+.mobile-brand {
+  font-weight: 600;
+}
+
+.mobile-offcanvas-header {
+  background: linear-gradient(135deg, #008080, #20b2aa);
+  color: white;
+}
+
+.mobile-offcanvas-header .btn-close {
+  filter: invert(1);
+}
+
 .sidebar-header {
   text-align: center;
   margin-bottom: 30px;

@@ -37,9 +37,9 @@ function AppContent() {
   }
 
   return (
-    <div className="d-flex">
+    <div className="app-layout">
       <Sidebar />
-      <div className="flex-grow-1">
+      <div className="app-main">
         <Routes>
           <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
           <Route path="/products" element={<ProtectedRoute><Products /></ProtectedRoute>} />

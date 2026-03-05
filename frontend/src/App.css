@@ -7,15 +7,27 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.d-flex {
+.app-layout {
   display: flex;
 }
 
-.flex-grow-1 {
+.app-main {
   flex: 1;
   margin-left: 250px;
   width: calc(100% - 250px);
   padding: 20px;
+}
+
+@media (max-width: 767.98px) {
+  .app-layout {
+    display: block;
+  }
+
+  .app-main {
+    margin-left: 0;
+    width: 100%;
+    padding: 12px;
+  }
 }
 
 /* Card styling */

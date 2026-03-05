@@ -255,7 +255,7 @@ const Invoices = () => {
             </Form.Group>
 
             {items.length > 0 && (
-              <Table bordered className="mb-3">
+              <Table bordered responsive className="mb-3">
                 <thead>
                   <tr>
                     <th>Product</th>

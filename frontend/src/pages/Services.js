@@ -110,7 +110,7 @@ const Services = () => {
 
       <Button onClick={openCreate}>Add Service</Button>
 
-      <Table striped bordered hover className="mt-3">
+      <Table striped bordered hover responsive className="mt-3">
         <thead>
           <tr>
             <th>Code</th>
