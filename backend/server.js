@@ -33,13 +33,21 @@ app.get('/', (req, res) => {
 
 // Products
 app.get('/api/products', async (req, res) => {
-  const products = await prisma.product.findMany();
+  const kind = req.query.kind ? String(req.query.kind) : null;
+  if (kind && kind !== 'product' && kind !== 'service') {
+    return res.status(400).json({ error: 'Invalid kind. Use product or service.' });
+  }
+
+  const products = await prisma.product.findMany({
+    where: kind ? { kind } : undefined,
+    orderBy: { id: 'desc' }
+  });
   res.json(products);
 });
 
 app.post('/api/products', requireAuth, async (req, res) => {
   try {
-    const { code, description, price, barcode } = req.body;
+    const { code, description, price, barcode, kind } = req.body;
 
     if (!code || !description || price === undefined || price === null) {
       return res.status(400).json({ error: 'code, description, and price are required' });
@@ -51,9 +59,19 @@ app.post('/api/products', requireAuth, async (req, res) => {
     }
 
     const normalizedBarcode = barcode ? String(barcode) : null;
+    const normalizedKind = kind ? String(kind) : 'product';
+    if (normalizedKind !== 'product' && normalizedKind !== 'service') {
+      return res.status(400).json({ error: 'Invalid kind. Use product or service.' });
+    }
 
     const product = await prisma.product.create({
-      data: { code: String(code), description: String(description), price: parsedPrice, barcode: normalizedBarcode }
+      data: {
+        code: String(code),
+        description: String(description),
+        price: parsedPrice,
+        barcode: normalizedBarcode,
+        kind: normalizedKind
+      }
     });
 
     res.json(product);
@@ -74,7 +92,7 @@ app.patch('/api/products/:id', requireAuth, async (req, res) => {
       return res.status(400).json({ error: 'Invalid product id' });
     }
 
-    const { code, description, price, barcode } = req.body;
+    const { code, description, price, barcode, kind } = req.body;
 
     const data = {};
     if (code !== undefined) data.code = String(code);
@@ -87,6 +105,13 @@ app.patch('/api/products/:id', requireAuth, async (req, res) => {
       data.price = parsedPrice;
     }
     if (barcode !== undefined) data.barcode = barcode ? String(barcode) : null;
+    if (kind !== undefined) {
+      const normalizedKind = kind ? String(kind) : 'product';
+      if (normalizedKind !== 'product' && normalizedKind !== 'service') {
+        return res.status(400).json({ error: 'Invalid kind. Use product or service.' });
+      }
+      data.kind = normalizedKind;
+    }
 
     if (Object.keys(data).length === 0) {
       return res.status(400).json({ error: 'No fields provided to update' });

@@ -56,6 +56,7 @@ model Product {
   code        String  @unique
   description String
   price       Float
+  kind        String  @default("product")
   barcode     String? @unique
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

@@ -7,6 +7,7 @@ const Invoices = () => {
   const [documents, setDocuments] = useState({ invoices: [], quotes: [] });
   const [clients, setClients] = useState([]);
   const [products, setProducts] = useState([]);
+  const [services, setServices] = useState([]);
   const [show, setShow] = useState(false);
   const [showSignature, setShowSignature] = useState(false);
   const [type, setType] = useState('invoice');
@@ -30,7 +31,9 @@ const Invoices = () => {
       ]);
       setDocuments(invRes.data);
       setClients(clientRes.data);
-      setProducts(prodRes.data);
+      const all = Array.isArray(prodRes.data) ? prodRes.data : [];
+      setProducts(all.filter((p) => (p.kind || 'product') === 'product'));
+      setServices(all.filter((p) => (p.kind || 'product') === 'service'));
     } catch (err) {
       setError('Failed to fetch data');
       console.error(err);
@@ -38,7 +41,8 @@ const Invoices = () => {
   };
 
   const addItem = (product) => {
-    setItems([...items, { productId: product.id, product, quantity: 1, price: product.price }]);
+    const kind = product.kind || 'product';
+    setItems([...items, { productId: product.id, product, kind, quantity: 1, price: product.price }]);
   };
 
   const removeItem = (index) => {
@@ -47,6 +51,11 @@ const Invoices = () => {
 
   const updateItem = (index, field, value) => {
     const newItems = [...items];
+    if (newItems[index]?.kind === 'service' && field === 'quantity') {
+      newItems[index].quantity = 1;
+      setItems(newItems);
+      return;
+    }
     if (field === 'quantity') {
       newItems[index].quantity = parseInt(value);
     } else if (field === 'price') {
@@ -229,6 +238,22 @@ const Invoices = () => {
               </div>
             </Form.Group>
 
+            <Form.Group className="mb-3">
+              <Form.Label>Add Services</Form.Label>
+              <div className="d-flex gap-2 flex-wrap">
+                {services.map(s => (
+                  <Button
+                    key={s.id}
+                    variant="outline-secondary"
+                    size="sm"
+                    onClick={() => addItem(s)}
+                  >
+                    {s.description} - R {s.price}
+                  </Button>
+                ))}
+              </div>
+            </Form.Group>
+
             {items.length > 0 && (
               <Table bordered className="mb-3">
                 <thead>
@@ -250,6 +275,7 @@ const Invoices = () => {
                           value={item.quantity}
                           onChange={(e) => updateItem(index, 'quantity', e.target.value)}
                           min="1"
+                          disabled={item.kind === 'service'}
                         />
                       </td>
                       <td>
