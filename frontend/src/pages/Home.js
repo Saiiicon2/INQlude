@@ -255,7 +255,9 @@ const Home = () => {
           <Card className="h-100">
             <Card.Body>
               <Card.Title>6-Month Revenue Trend</Card.Title>
-              <Bar data={analytics.monthlyRevenueChart} options={{ responsive: true, maintainAspectRatio: false }} height={120} />
+              <div style={{ height: '300px' }}>
+                <Bar data={analytics.monthlyRevenueChart} options={{ responsive: true, maintainAspectRatio: false }} />
+              </div>
             </Card.Body>
           </Card>
         </Col>
@@ -264,19 +266,20 @@ const Home = () => {
             <Card.Body>
               <Card.Title>Status Mix</Card.Title>
               {analytics.statusChart.labels.length > 0 ? (
-                <Doughnut
-                  data={analytics.statusChart}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                      legend: {
-                        position: 'bottom'
+                <div style={{ height: '300px' }}>
+                  <Doughnut
+                    data={analytics.statusChart}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: {
+                          position: 'bottom'
+                        }
                       }
-                    }
-                  }}
-                  height={120}
-                />
+                    }}
+                  />
+                </div>
               ) : (
                 <div className="text-muted mt-2">No statuses available yet.</div>
               )}
