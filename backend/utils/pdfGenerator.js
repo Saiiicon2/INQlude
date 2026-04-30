@@ -109,9 +109,6 @@ const generateInvoicePDF = async (invoice, company, filename) => {
 
       // Banking details
       const bankingDetailsY = invoice.paidNow > 0 && invoice.total - invoice.paidNow > 0 ? totalsY + 160 : totalsY + 140;
-
-      // Banking details
-      const bankingDetailsY = invoice.paidNow > 0 && invoice.total - invoice.paidNow > 0 ? totalsY + 160 : totalsY + 140;
       if (company.bankingDetails) {
         doc.fontSize(9).font('Helvetica-Bold').text('Banking Details:', 50, bankingDetailsY);
         doc.fontSize(9).font('Helvetica').text(company.bankingDetails, 50, bankingDetailsY + 20, { width: 400 });
