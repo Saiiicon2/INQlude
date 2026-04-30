@@ -77,7 +77,7 @@ router.get('/:id', async (req, res) => {
 // Create invoice
 router.post('/', async (req, res) => {
   try {
-    const { clientId, items, discount, discountType, type, signature } = req.body;
+    const { clientId, items, discount, discountType, paidNow, type, signature } = req.body;
 
     // Get settings for auto-numbering
     let settings = await prisma.settings.findFirst();
@@ -112,6 +112,10 @@ router.post('/', async (req, res) => {
 
     const total = subtotal - discountAmount + vatAmount;
 
+    // Parse paidNow and validate
+    const parsedPaidNow = typeof paidNow === 'number' ? paidNow : Number.parseFloat(String(paidNow || 0));
+    const validPaidNow = Math.min(Math.max(0, parsedPaidNow), total); // Clamp between 0 and total
+
     // Auto-generate number
     let number;
     if (type === 'quote') {
@@ -137,6 +141,7 @@ router.post('/', async (req, res) => {
           discount: discountAmount,
           vat: vatAmount,
           total,
+          paidNow: validPaidNow,
           signature: signature || null,
           items: {
             create: items.map(item => ({
@@ -164,6 +169,7 @@ router.post('/', async (req, res) => {
           discount: discountAmount,
           vat: vatAmount,
           total,
+          paidNow: validPaidNow,
           signature: signature || null,
           items: {
             create: items.map(item => ({

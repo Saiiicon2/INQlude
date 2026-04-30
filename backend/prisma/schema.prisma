@@ -73,6 +73,7 @@ model Invoice {
   total       Float
   discount    Float    @default(0)
   vat         Float    @default(0)
+  paidNow     Float    @default(0)
   type        String   @default("invoice")
   status      String   @default("pending")
   signature   String?
@@ -90,6 +91,7 @@ model Quote {
   total       Float
   discount    Float    @default(0)
   vat         Float    @default(0)
+  paidNow     Float    @default(0)
   status      String   @default("pending")
   signature   String?
   createdAt   DateTime @default(now())

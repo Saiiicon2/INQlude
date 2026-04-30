@@ -94,18 +94,36 @@ const generateInvoicePDF = async (invoice, company, filename) => {
       doc.text('Total Due:', 380, totalsY + 90);
       doc.text(`R ${invoice.total.toFixed(2)}`, 480, totalsY + 90);
 
+      // Paid now and remaining balance (if applicable)
+      if (invoice.paidNow > 0) {
+        doc.fontSize(11);
+        doc.text('Amount Paid Now:', 380, totalsY + 110);
+        doc.text(`R ${invoice.paidNow.toFixed(2)}`, 480, totalsY + 110);
+
+        const remaining = invoice.total - invoice.paidNow;
+        if (remaining > 0) {
+          doc.text('Remaining Balance:', 380, totalsY + 130);
+          doc.text(`R ${remaining.toFixed(2)}`, 480, totalsY + 130);
+        }
+      }
+
       // Banking details
+      const bankingDetailsY = invoice.paidNow > 0 && invoice.total - invoice.paidNow > 0 ? totalsY + 160 : totalsY + 140;
+
+      // Banking details
+      const bankingDetailsY = invoice.paidNow > 0 && invoice.total - invoice.paidNow > 0 ? totalsY + 160 : totalsY + 140;
       if (company.bankingDetails) {
-        doc.fontSize(9).font('Helvetica-Bold').text('Banking Details:', 50, totalsY + 140);
-        doc.fontSize(9).font('Helvetica').text(company.bankingDetails, 50, totalsY + 160, { width: 400 });
+        doc.fontSize(9).font('Helvetica-Bold').text('Banking Details:', 50, bankingDetailsY);
+        doc.fontSize(9).font('Helvetica').text(company.bankingDetails, 50, bankingDetailsY + 20, { width: 400 });
       }
 
       // Disclaimer
+      const disclaimerY = company.bankingDetails ? bankingDetailsY + 70 : bankingDetailsY;
       if (company.disclaimer) {
         if (invoice.type === 'quote') {
-          doc.fontSize(8).font('Helvetica-Bold').text('Valid for 7 days', 50, 680);
+          doc.fontSize(8).font('Helvetica-Bold').text('Valid for 7 days', 50, disclaimerY);
         }
-        doc.fontSize(8).font('Helvetica').text(company.disclaimer, 50, 690, { width: 500 });
+        doc.fontSize(8).font('Helvetica').text(company.disclaimer, 50, disclaimerY + 10, { width: 500 });
       }
 
       // Signature line

@@ -16,6 +16,7 @@ const Invoices = () => {
   const [items, setItems] = useState([]);
   const [discount, setDiscount] = useState(0);
   const [discountType, setDiscountType] = useState('amount');
+  const [paidNow, setPaidNow] = useState(0);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -105,6 +106,7 @@ const Invoices = () => {
         items,
         discount,
         discountType,
+        paidNow: parseFloat(paidNow) || 0,
         type,
         signature: signatureData
       });
@@ -112,6 +114,7 @@ const Invoices = () => {
       setSuccess(`${type.charAt(0).toUpperCase() + type.slice(1)} created successfully with signature!`);
       setItems([]);
       setDiscount(0);
+      setPaidNow(0);
       setSelectedClient('');
       setShow(false);
       fetchData();
@@ -151,6 +154,8 @@ const Invoices = () => {
       type: d.docType,
       client: d.client?.name,
       total: typeof d.total === 'number' ? d.total.toFixed(2) : d.total,
+      paidNow: d.paidNow > 0 ? d.paidNow.toFixed(2) : '-',
+      remaining: (d.total - (d.paidNow || 0)).toFixed(2),
       status: d.status,
       createdAt: d.createdAt ? new Date(d.createdAt).toISOString() : ''
     }));
@@ -160,6 +165,8 @@ const Invoices = () => {
       { key: 'type', label: 'Type' },
       { key: 'client', label: 'Client' },
       { key: 'total', label: 'Total' },
+      { key: 'paidNow', label: 'Paid Now' },
+      { key: 'remaining', label: 'Remaining' },
       { key: 'status', label: 'Status' },
       { key: 'createdAt', label: 'Created At (ISO)' }
     ]);
@@ -194,13 +201,17 @@ const Invoices = () => {
             <th>Type</th>
             <th>Client</th>
             <th>Total</th>
+            <th>Paid Now</th>
+            <th>Remaining</th>
             <th>Status</th>
             <th>Date</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {allDocs.map(d => (
+          {allDocs.map(d => {
+            const remaining = d.total - (d.paidNow || 0);
+            return (
             <tr key={`${d.docType}-${d.id}`}>
               <td>{d.number}</td>
               <td><span className="badge" style={{ backgroundColor: d.docType === 'invoice' ? '#20b2aa' : '#999' }}>
@@ -208,6 +219,8 @@ const Invoices = () => {
               </span></td>
               <td>{d.client.name}</td>
               <td>R {d.total.toFixed(2)}</td>
+              <td>{d.paidNow > 0 ? `R ${d.paidNow.toFixed(2)}` : '-'}</td>
+              <td>{remaining > 0 ? `R ${remaining.toFixed(2)}` : 'Paid'}</td>
               <td>{d.status}</td>
               <td>{new Date(d.createdAt).toLocaleDateString()}</td>
               <td>
@@ -220,7 +233,8 @@ const Invoices = () => {
                 </Button>
               </td>
             </tr>
-          ))}
+            );
+          })}
         </tbody>
       </Table>
 
@@ -352,6 +366,23 @@ const Invoices = () => {
 
             <div className="mt-3 p-3" style={{ backgroundColor: '#f8f9fa', borderRadius: '5px' }}>
               <h5>Total Due: <span style={{ color: '#20b2aa' }}>R {calculateTotal().toFixed(2)}</span></h5>
+              <Form.Group className="mt-3">
+                <Form.Label>Amount Due Now (leave blank for full amount)</Form.Label>
+                <Form.Control
+                  type="number"
+                  step="0.01"
+                  value={paidNow}
+                  onChange={(e) => setPaidNow(e.target.value)}
+                  placeholder="Enter amount to collect now"
+                  min="0"
+                  max={calculateTotal()}
+                />
+                {paidNow > 0 && paidNow < calculateTotal() && (
+                  <small className="text-muted d-block mt-2">
+                    Remaining balance: R {(calculateTotal() - parseFloat(paidNow)).toFixed(2)}
+                  </small>
+                )}
+              </Form.Group>
             </div>
 
             <Button
